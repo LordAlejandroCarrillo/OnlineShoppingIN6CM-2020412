@@ -1,0 +1,63 @@
+[{
+  "_id": {
+    "$oid": "67bd374a513c0d891435a8af"
+  },
+  "name": "MSI, Cubi 5 12M",
+  "description": "¡5-1235U 1.3GHz, 65W, Black – 824142310168",
+  "stock": 0,
+  "sold": 0,
+  "price": 4500,
+  "categoryRef": {
+    "$oid": "67bca0ec58387310bfa820f2"
+  },
+  "categoryName": "Computers",
+  "state": true,
+  "createdAt": {
+    "$date": "2025-02-25T03:21:46.544Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-25T03:21:46.544Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67bd3a3f7d5b6062a8e5be60"
+  },
+  "name": "Dell, Optiplex SFF 7020",
+  "description": "i5-12500, 8GB, SSD 512GB, W11 Pro, LA – 884116480150",
+  "stock": 0,
+  "sold": 0,
+  "price": 7000,
+  "categoryRef": {
+    "$oid": "67bca0ec58387310bfa820f2"
+  },
+  "categoryName": "Computers",
+  "state": false,
+  "createdAt": {
+    "$date": "2025-02-25T03:34:23.687Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-25T03:34:23.687Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67bd3a737d5b6062a8e5be66"
+  },
+  "name": "HP, Desktop 400-G9 SFF",
+  "description": "i5-13500, 8GB, SSD 512GB, W11 Pro, LA – 197961728804",
+  "stock": 0,
+  "sold": 0,
+  "price": 7500,
+  "categoryRef": {
+    "$oid": "67bca0ec58387310bfa820f2"
+  },
+  "categoryName": "Computers",
+  "state": true,
+  "createdAt": {
+    "$date": "2025-02-25T03:35:15.271Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-25T03:35:15.271Z"
+  }
+}]
