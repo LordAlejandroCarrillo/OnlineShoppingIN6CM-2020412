@@ -91,18 +91,18 @@ export const getProducts = async (req, res) =>{
             Product.find(query)
         ])
 
-        const getExistentCategories = products.filter(localProduct => localProduct.state == true)
-        if(getExistentCategories.length != 0){
+        const getExistentProduct = products.filter(localProduct => localProduct.state == true)
+        if(getExistentProduct.length != 0){
             return res.status(200).json({
                 success: true,
                 msg: "Products found.",
-                getExistentCategories,
+                getExistentProduct,
             })
         } else{
             return res.status(401).json({
                 success: true,
                 msg: "Products not found.",
-                getExistentCategories,
+                getExistentProduct,
             })
         }
         
@@ -266,6 +266,176 @@ export const deleteProduct = async (req, res = response)=>{
         res.status(500).json({
             success: false,
             msg: 'Error deleting product',
+            error
+        })
+    }
+}
+
+export const getProductsSelledTheMost = async (req, res) =>{
+    try {
+        const query = {state:true}
+        const [totalC, products] = await Promise.all([
+            Product.countDocuments(query),
+            Product.find(query)
+        ])
+
+        const getExistentProduct = products.filter(localProduct => localProduct.state == true)
+        if(getExistentProduct.length != 0){
+            getExistentProduct.sort((a,b) => b.sold - a.sold)
+            return res.status(200).json({
+                success: true,
+                msg: "Products found.",
+                getExistentProduct,
+            })
+        } else{
+            return res.status(401).json({
+                success: true,
+                msg: "Products not found.",
+                getExistentProduct,
+            })
+        }
+        
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            message: "Products not found.",
+            error: e.message
+        })
+    }
+}
+
+export const getProductsSoldOut = async (req, res) =>{
+    try {
+
+        const token = await req.header('x-token')
+        if(!token){
+            return res.status(401).json({
+                msg: 'No hay token en la peticion'
+            })
+        }
+        const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY)
+
+        const query = {state:true}
+        const [totalC, products] = await Promise.all([
+            Product.countDocuments(query),
+            Product.find(query)
+        ])
+
+        const getExistentProduct = products.filter(localProduct => localProduct.state == true)
+
+        const currentUser = await User.findById(uid)
+        const productsOutOfStock = getExistentProduct.filter(localProduct => localProduct.stock == 0)
+        if(currentUser.role == "OWNER_ROLE" || currentUser.role == "ADMIN_ROLE"){
+            if(getExistentProduct.length != 0){
+                console.log(getExistentProduct[1].stock)
+                if(productsOutOfStock.length != 0){
+                    return res.status(200).json({
+                        success: true,
+                        msg: "Products found.",
+                        productsOutOfStock
+                    })
+                } else{
+                    return res.status(401).json({
+                        success: true,
+                        msg: "Products not found.",
+                        productsOutOfStock
+                    })
+                }
+            } else{
+                return res.status(401).json({
+                    success: true,
+                    msg: "Products not found.",
+                    productsOutOfStock,
+                })
+            }
+        } else{
+            return res.status(401).json({
+                success: true,
+                msg: "You are not allowed to do that."
+            })
+        }
+        
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            message: "Products not found.",
+            error: e.message
+        })
+    }
+}
+
+export const getProductsByCategory = async (req, res = response)=>{
+    try {
+        const { category } = req.params
+
+        const query = {state:true}
+        const [totalC, products] = await Promise.all([
+            Product.countDocuments(query),
+            Product.find(query)
+        ])
+
+        const lowerCategory = category ? category.toLowerCase() : null;
+                const capitalizedCategory = lowerCategory 
+                    ? lowerCategory.charAt(0).toUpperCase() + lowerCategory.slice(1) 
+                    : null
+
+        const verifyIfProductExists = products.filter(localProduct => localProduct.state == true)
+        const productWithCategoryRequested = verifyIfProductExists.filter(localCProduct => localCProduct.categoryName == capitalizedCategory)
+        
+        if(productWithCategoryRequested.length != 0){
+            res.status(200).json({
+                success: true,
+                msg: "Products found",
+                productWithCategoryRequested
+            })
+        } else{
+            res.status(400).json({
+                success:true,
+                msg: "Producst not found or your category doesnt exist.",
+                productWithCategoryRequested
+            })
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            msg: 'Error updating product',
+            error
+        })
+    }
+}
+
+export const getProductByName = async (req, res = response)=>{
+    try {
+        const { name } = req.params
+
+        const query = {state:true}
+        const [totalC, products] = await Promise.all([
+            Product.countDocuments(query),
+            Product.find(query)
+        ])
+
+        const verifyIfProductExists = products.filter(localProduct => localProduct.state == true)
+        console.log(verifyIfProductExists)
+        const productWithNameRequested = verifyIfProductExists.filter(localNProduct => localNProduct.name.toLowerCase().startsWith(name.toLowerCase()))
+        if(productWithNameRequested.length != 0){
+            res.status(200).json({
+                success: true,
+                msg: "Products found",
+                productWithNameRequested
+            })
+        } else{
+            res.status(400).json({
+                success:true,
+                msg: "Producst not found or your name doesnt exist.",
+                productWithNameRequested
+            })
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            msg: 'Error getting products.',
             error
         })
     }
