@@ -1,0 +1,29 @@
+[{
+  "_id": {
+    "$oid": "67bff63da0ecf2c65ca9db26"
+  },
+  "nameOfUser": "Mario",
+  "surnameOfUser": "Lopez",
+  "emailOfUser": "lopez@gmail.com",
+  "userRef": {
+    "$oid": "67bc832bc34e8b5219ef9d9b"
+  },
+  "total": 45000,
+  "productList": [
+    {
+      "productId": "67bd374a513c0d891435a8af",
+      "productName": "MSI, Cubi 5 12M",
+      "productDescription": "¡5-1235U 1.3GHz, 65W, Black – 824142310168",
+      "productPrice": 4500,
+      "productCategory": "Computers",
+      "productAmount": 10
+    }
+  ],
+  "state": true,
+  "createdAt": {
+    "$date": "2025-02-27T05:21:01.502Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-03T16:47:18.961Z"
+  }
+}]
