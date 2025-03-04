@@ -1,0 +1,86 @@
+[{
+  "_id": {
+    "$oid": "67bff63da0ecf2c65ca9db26"
+  },
+  "nameOfUser": "Mario",
+  "surnameOfUser": "Lopez",
+  "emailOfUser": "lopez@gmail.com",
+  "userRef": {
+    "$oid": "67bc832bc34e8b5219ef9d9b"
+  },
+  "total": 45000,
+  "productList": [
+    {
+      "productId": "67bd374a513c0d891435a8af",
+      "productName": "MSI, Cubi 5 12M",
+      "productDescription": "¡5-1235U 1.3GHz, 65W, Black – 824142310168",
+      "productPrice": 4500,
+      "productCategory": "Computers",
+      "productAmount": 10
+    }
+  ],
+  "state": true,
+  "createdAt": {
+    "$date": "2025-02-27T05:21:01.502Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-03T16:47:18.961Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c7178f3de167ab141f96b7"
+  },
+  "nameOfUser": "Tomas",
+  "surnameOfUser": "Fernandez",
+  "emailOfUser": "lopez@gmail.com",
+  "userRef": {
+    "$oid": "67c70592d61dd738d6e8044e"
+  },
+  "total": 0,
+  "productList": [],
+  "state": true,
+  "createdAt": {
+    "$date": "2025-03-04T15:09:03.246Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-04T15:09:03.246Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c717aa3de167ab141f96bd"
+  },
+  "nameOfUser": "Hugo",
+  "surnameOfUser": "Lopez",
+  "emailOfUser": "tulio@gmail.com",
+  "userRef": {
+    "$oid": "67c70796d61dd738d6e80454"
+  },
+  "total": 375000,
+  "productList": [
+    {
+      "productId": "67bd3a737d5b6062a8e5be66",
+      "productName": "HP, Desktop 400-G9 SFF",
+      "productDescription": "i5-13500, 8GB, SSD 512GB, W11 Pro, LA – 197961728804",
+      "productPrice": 7500,
+      "productCategory": "Default",
+      "productAmount": 20
+    },
+    {
+      "productId": "67c7149df8cc598376589883",
+      "productName": "DELL PC BUENA",
+      "productDescription": "i5-13500, 8GB, SSD 512GB, W11 Pro, LA – 197961728804",
+      "productPrice": 7500,
+      "productCategory": "Motocycle",
+      "productAmount": 30
+    }
+  ],
+  "state": true,
+  "createdAt": {
+    "$date": "2025-03-04T15:09:30.945Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-04T15:13:44.747Z"
+  }
+}]
