@@ -1,0 +1,42 @@
+[{
+  "_id": {
+    "$oid": "67bc7fe873f14cc51c2c3600"
+  },
+  "name": "Default",
+  "description": "Default category.",
+  "state": true,
+  "createdAt": {
+    "$date": "2025-02-24T14:19:20.858Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-24T14:19:20.858Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67bca0ec58387310bfa820f2"
+  },
+  "name": "Computers",
+  "description": "Windows and Apple",
+  "state": true,
+  "createdAt": {
+    "$date": "2025-02-24T16:40:12.329Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-24T17:50:38.181Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67bca11758387310bfa820f6"
+  },
+  "name": "Phones",
+  "description": "Android and IPhone",
+  "state": true,
+  "createdAt": {
+    "$date": "2025-02-24T16:40:55.259Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-24T17:07:08.124Z"
+  }
+}]
