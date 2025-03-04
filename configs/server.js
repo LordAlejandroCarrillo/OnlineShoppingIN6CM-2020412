@@ -13,6 +13,7 @@ import Category from '../src/categories/category.model.js'
 import { hash } from 'argon2'
 import categoryRoutes from '../src/categories/category.routes.js';
 import productRoutes from '../src/products/product.routes.js';
+import billRoutes from '../src/bills/bill.routes.js';
 
 const middlewares = (app) => {
     app.use(express.urlencoded({ extended:false }))
@@ -28,6 +29,7 @@ const routes = (app) => {
     app.use('/onlineShopping/v1/users', userRoutes)
     app.use('/onlineShopping/v1/categories', categoryRoutes)
     app.use('/onlineShopping/v1/products', productRoutes)
+    app.use('/onlineShopping/v1/bills', billRoutes)
 }
 
 const connectDB = async () => {
