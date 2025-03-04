@@ -113,17 +113,37 @@ export const deleteUser = async (req, res = response)=>{
         }
         const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY)
 
+        const data = req.body
+
         const userData = await User.findById(uid)
         const idParamsUser = await User.findById(id)
 
+        const verifyPassword = verify(idParamsUser.password, data.password)
+
+        const confirmationLowercase = data.confirm.toLowerCase()
+
         if(userData.state == true || idParamsUser == true){
             if(id == uid){
-                const user = await User.findByIdAndUpdate(uid, {state:false}, {new:true})
-                res.status(200).json({
-                    success: true,
-                    msg: "User deleted",
-                    user
-                })
+                if(verifyPassword){
+                    if(confirmationLowercase == "aceptar"){
+                        const user = await User.findByIdAndUpdate(uid, {state:false}, {new:true})
+                        res.status(200).json({
+                            success: true,
+                            msg: "User deleted",
+                            user
+                        })
+                    } else{
+                        res.status(401).json({
+                            success: false,
+                            msg: "Deletion cancelled."
+                        })
+                    }
+                } else{
+                    res.status(401).json({
+                        success: false,
+                        msg: "Invalid password."
+                    })
+                }
             } else if( userData.role == "ADMIN_ROLE" || userData.role == "OWNER_ROLE" ){
                 const user = await User.findByIdAndUpdate(id, {state:false}, {new:true})
                 res.status(200).json({
@@ -206,6 +226,7 @@ export const updateRoleUser = async (req, res = response)=>{
 export const addProductToUser = async (req, res = response)=>{
     try {
         const {id} = req.params
+        const { amount } = req.body
         const token = req.header('x-token')
         if(!token){
             return res.status(401).json({
@@ -216,94 +237,209 @@ export const addProductToUser = async (req, res = response)=>{
 
         const userData = await User.findById(uid)
         const addingProduct = await Product.findById(id)
-        if(userData.state == true){
-            
-            if(addingProduct.state == true){
-                
-                if(addingProduct.stock > 0){
+
+        if(amount == " " || !isNaN(amount)){
+            console.log("succeed")
+            if(userData.state == true){
+    
+                if(addingProduct.state == true){
                     
-                    if(userData.shoppingCart.length == 0){
-                        let newShoppingCart = []
-                        newShoppingCart = userData.shoppingCart
-                        console.log(userData.shoppingCart)
-                        newShoppingCart.push({
-                            productId: addingProduct.id,
-                            productName: addingProduct.name,
-                            productDescription: addingProduct.description,
-                            productPrice: addingProduct.price,
-                            productCategory: addingProduct.categoryName,
-                            productAmount: 1
-                            
-                        })
+                    if(addingProduct.stock > 0){
+                        
+                        if(userData.shoppingCart.length == 0){
+                            if(amount == " " || amount <= 0){
+                                let newShoppingCart = []
+                                let {stock} = await Product.findById(id)
+                                if(stock >= 1){
+                                    newShoppingCart = userData.shoppingCart
+                                    newShoppingCart.push({
+                                        productId: addingProduct.id,
+                                        productName: addingProduct.name,
+                                        productDescription: addingProduct.description,
+                                        productPrice: addingProduct.price,
+                                        productCategory: addingProduct.categoryName,
+                                        productAmount: 1
+                                        
+                                    })
+            
+                                    const user = await User.findByIdAndUpdate(uid, {shoppingCart: newShoppingCart}, {new:true})
+                                    
+                                    res.status(200).json({
+                                        success: true,
+                                        msg: "Product added to shopping cart.",
+                                        user
+                                    })
+                                } else{
+                                    res.status(401).json({
+                                        success: true,
+                                        msg: "You have exceeded the stock of the product.",
+                                    })
+                                }
+                            } else{
+                                let {stock} = await Product.findById(id)
+                                if(stock >= parseInt(amount)){
+                                    let newShoppingCart = []
+                                    newShoppingCart = userData.shoppingCart
+                                    newShoppingCart.push({
+                                        productId: addingProduct.id,
+                                        productName: addingProduct.name,
+                                        productDescription: addingProduct.description,
+                                        productPrice: addingProduct.price,
+                                        productCategory: addingProduct.categoryName,
+                                        productAmount: parseInt(amount)
 
-                        console.log(newShoppingCart)
-                        const user = await User.findByIdAndUpdate(uid, {shoppingCart: newShoppingCart}, {new:true})
-                        console.log(addingProduct)
-                        
-                        res.status(200).json({
-                            success: true,
-                            msg: "Product added to shopping cart.",
-                            user
-                        })
-                        
-                    } else if(userData.shoppingCart.length > 0){
-                        let productCount = 0
-                        userData.shoppingCart.map( localProductUser =>{
-                            if(localProductUser.productId == id){
-                                productCount++
-                            }
-                        })
-                        if(productCount == 0){
-                            let newShoppingCart = []
-                            newShoppingCart = userData.shoppingCart
-                            console.log(userData.shoppingCart)
-                            newShoppingCart.push({
-                                productId: addingProduct.id,
-                                productName: addingProduct.name,
-                                productDescription: addingProduct.description,
-                                productPrice: addingProduct.price,
-                                productCategory: addingProduct.categoryName,
-                                productAmount: 1
-
-                            })
-                            const user = await User.findByIdAndUpdate(uid, {shoppingCart: newShoppingCart}, {new:true})
-                            res.status(200).json({
-                                success: true,
-                                msg: "Product added to shopping cart.",
-                                user
-                            })
-                        } else if (productCount > 0){
-                            let newShoppingCart = []
-                            newShoppingCart = userData.shoppingCart
-                            
-                            let productAmount = 0
-                            newShoppingCart.map( localNewShoppingCart =>{
-                                productAmount = localNewShoppingCart.productAmount
-                            })
-                        
-                            newShoppingCart.filter( localNewShoppingCart => localNewShoppingCart.id != id)
-                        
-                            console.log(userData.shoppingCart)
-                            newShoppingCart.push({
-                                productId: addingProduct.id,
-                                productName: addingProduct.name,
-                                productDescription: addingProduct.description,
-                                productPrice: addingProduct.price,
-                                productCategory: addingProduct.categoryName,
-                                productAmount: productAmount+1
+                                    })
                                 
-                            })
-                        
-                            console.log(newShoppingCart)
-                            const user = await User.findByIdAndUpdate(uid, {shoppingCart: newShoppingCart}, {new:true})
-                            console.log(addingProduct)
+                                    const user = await User.findByIdAndUpdate(uid, {shoppingCart: newShoppingCart}, {new:true})
+
+                                    res.status(200).json({
+                                        success: true,
+                                        msg: "Product added to shopping cart.",
+                                        user
+                                    })
+                                } else{
+                                    res.status(401).json({
+                                        success: true,
+                                        msg: "You have exceeded the stock of the product.",
+                                    })
+                                }
+                            }
                             
-                            res.status(200).json({
-                                success: true,
-                                msg: "Product added to shopping cart.",
-                                user
+                        } else if(userData.shoppingCart.length > 0){
+                            let productCount = 0
+                            userData.shoppingCart.map( localProductUser =>{
+                                if(localProductUser.productId == id){
+                                    productCount++
+                                }
                             })
-                            
+                            if(productCount == 0){
+                                if(amount == " " || amount <= 0){
+                                    let {stock} = await Product.findById(id)
+                                    if(stock >= 1){
+                                        let newShoppingCart = []
+                                        newShoppingCart = userData.shoppingCart
+                                        newShoppingCart.push({
+                                            productId: addingProduct.id,
+                                            productName: addingProduct.name,
+                                            productDescription: addingProduct.description,
+                                            productPrice: addingProduct.price,
+                                            productCategory: addingProduct.categoryName,
+                                            productAmount: 1
+                                            
+                                        })
+                                        const user = await User.findByIdAndUpdate(uid, {shoppingCart: newShoppingCart}, {new:true})
+                                        res.status(200).json({
+                                            success: true,
+                                            msg: "Product added to shopping cart.",
+                                            user
+                                        })
+                                    } else{
+                                        res.status(401).json({
+                                            success: true,
+                                            msg: "You have exceeded the stock of the product.",
+                                        })
+                                    }
+                                } else{
+                                    let {stock} = await Product.findById(id)
+                                    if(stock >= parseInt(amount)){
+                                        let newShoppingCart = []
+                                        newShoppingCart = userData.shoppingCart
+                                        newShoppingCart.push({
+                                            productId: addingProduct.id,
+                                            productName: addingProduct.name,
+                                            productDescription: addingProduct.description,
+                                            productPrice: addingProduct.price,
+                                            productCategory: addingProduct.categoryName,
+                                            productAmount: parseInt(amount)
+                                        
+                                        })
+                                        const user = await User.findByIdAndUpdate(uid, {shoppingCart: newShoppingCart}, {new:true})
+                                        res.status(200).json({
+                                            success: true,
+                                            msg: "Product added to shopping cart.",
+                                            user
+                                        })
+                                    } else{
+                                        res.status(401).json({
+                                            success: true,
+                                            msg: "You have exceeded the stock of the product.",
+                                        })
+                                    }
+                                }
+                            } else if (productCount > 0){
+                                let newShoppingCart = []
+                                newShoppingCart = userData.shoppingCart
+                                
+                                let productAmount = 0
+                                newShoppingCart.map( localNewShoppingCart =>{
+                                    productAmount = localNewShoppingCart.productAmount
+                                })
+                                
+                                let {stock} = await Product.findById(id)
+                                let verifyAmount = ""
+                                if(amount == " " || amount == 0 || amount < 0){ 
+                                    verifyAmount = 1
+                                } else{
+                                    verifyAmount = parseInt(amount)
+                                }
+                                if(stock >= productAmount+verifyAmount){
+                                    const filterById = newShoppingCart.filter( localNewShoppingCart => localNewShoppingCart.productId != id)
+                                    await User.findByIdAndUpdate(uid, {shoppingCart: filterById}, {new:true})
+                                    let newAmount = parseInt(amount)
+                                    if(amount != " "){
+                                        if(amount < 1){
+                                            filterById.push({
+                                                productId: addingProduct.id,
+                                                productName: addingProduct.name,
+                                                productDescription: addingProduct.description,
+                                                productPrice: addingProduct.price,
+                                                productCategory: addingProduct.categoryName,
+                                                productAmount: productAmount+1
+
+                                            })
+                                        } else{
+                                            filterById.push({
+                                                productId: addingProduct.id,
+                                                productName: addingProduct.name,
+                                                productDescription: addingProduct.description,
+                                                productPrice: addingProduct.price,
+                                                productCategory: addingProduct.categoryName,
+                                                productAmount: productAmount+newAmount
+
+                                            })
+                                        }
+                                    } else{
+                                        filterById.push({
+                                            productId: addingProduct.id,
+                                            productName: addingProduct.name,
+                                            productDescription: addingProduct.description,
+                                            productPrice: addingProduct.price,
+                                            productCategory: addingProduct.categoryName,
+                                            productAmount: productAmount+1
+
+                                        })
+                                    }
+                                    const user = await User.findByIdAndUpdate(uid, {shoppingCart: filterById}, {new:true})
+
+                                    res.status(200).json({
+                                        success: true,
+                                        msg: "Product added to shopping cart.",
+                                        user
+                                    })
+                                } else{
+                                    res.status(401).json({
+                                        success: true,
+                                        msg: "You have exceeded the stock of the product.",
+                                    })
+                                }
+                                
+                            } else{
+                                res.status(401).json({
+                                    success: true,
+                                    msg: "Some error ocurred.",
+                                    
+                                })
+                            }
                         } else{
                             res.status(401).json({
                                 success: true,
@@ -313,29 +449,31 @@ export const addProductToUser = async (req, res = response)=>{
                         }
                     } else{
                         res.status(401).json({
-                            success: true,
-                            msg: "Some error ocurred.",
-                            
+                            success: false,
+                            msg: "Product out of stock."
                         })
                     }
                 } else{
                     res.status(401).json({
                         success: false,
-                        msg: "Product out of stock."
+                        msg: "Product not found."
                     })
                 }
             } else{
                 res.status(401).json({
                     success: false,
-                    msg: "Product not found."
+                    msg: "User not found."
                 })
             }
+
         } else{
+            console.log("wrong")
             res.status(401).json({
                 success: false,
-                msg: "User not found."
+                msg: "Your amount is not a number."
             })
         }
+
 
     } catch (error) {
         res.status(500).json({
